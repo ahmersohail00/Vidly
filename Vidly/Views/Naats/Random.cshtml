@@ -1,0 +1,23 @@
+﻿@model Vidly.ViewModels.RandomNaatsViewModel
+@{
+    ViewBag.Title = "Random";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ var className = Model.Customers.Count > 1 ? "popular" : null;}
+<h2 class="@className">@Model.Naat.Name</h2>
+@if (Model.Customers.Count == 0)
+{
+    <p>No one has rented this Naat.</p>
+}
+else
+{
+    <ul>
+        @foreach (var customers in Model.Customers)
+        {
+            <li>@customers.Name</li>
+        }
+    </ul>
+}
+
+
+

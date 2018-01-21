@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Vidly.Models.Naat>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Naats</h2>
+@if (!Model.Any())
+{
+    <text>No Naats are available yet.</text>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        @foreach (var naats in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink(naats.Name, "Details", "Naats", new { Id = naats.Id }, null)</td>
+            </tr>
+        }
+    </table>
+}
+
