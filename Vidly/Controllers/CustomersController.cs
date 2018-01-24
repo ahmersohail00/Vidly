@@ -17,7 +17,6 @@ namespace Vidly.Controllers
             _contex = new ApplicationDbContext();
         }
 
-        CustomersViewModel customersVM = new CustomersViewModel();
         // GET: Customers
         public ActionResult Index()
         {
