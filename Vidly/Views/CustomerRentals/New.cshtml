@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>New Rental</h2>
+<form id="NewRental">
+    <div class="form-group">
+        <label class="control-label">Customer</label>
+        <div class="tt-container">
+            <input id="customer" name="customer" data-rule-validCustomer="true" value="" required type='text' class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Naat</label>
+        <div class="tt-container">
+            <input id="naat" name="naat" data-rule-OneNaat="true" value="" type='text' class="form-control" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-sm-4">
+            <ul id="naats" class="list-group"></ul>
+        </div>
+    </div>
+    <button class="btn btn-primary">Submit</button>
+</form>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            var vm = {
+                naatId: []
+            };
+            var customers = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/customers?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#customer').typeahead(
+                {
+                    minLength: 3,
+                    highlight: true,
+                },
+                {
+                    name: 'customers',
+                    display: 'name',
+                    source: customers
+                }).on("typeahead:select", function (e, customer) {
+                    vm.customerId = customer.id;
+                });
+
+            var naats = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/naats?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#naat').typeahead(
+                {
+                    minLength: 3,
+                    highlight: true,
+                },
+                {
+                    name: 'naats',
+                    display: 'name',
+                    source: naats
+                }).on("typeahead:select", function (e, naat) {
+                    $('#naats').append("<li class='list-group-item '>" + naat.id + " " + naat.name + "</li>");
+                    vm.naatId.push(naat.id);
+                    $('#naat').typeahead("val", "");
+
+
+                });
+            $.validator.addMethod("validCustomer", function () {
+                return vm.customerId && vm.customerId !== 0;
+            }, "Please select a valid customer");
+
+            $.validator.addMethod("OneNaat", function () {
+                return vm.naatId && vm.naatId.length > 0;
+            }, "Please select atleast one naat");
+
+            var validator=$('#NewRental').validate({
+                submitHandler: function () {
+                    $.ajax({
+                        url: "/api/CustomerRentals",
+                        method: "post",
+                        data: vm
+                    })
+                        .done(function () {
+                            toastr.success("Rentals Successfully Added");
+                            $('#customer').typeahead("val", "");
+                            $('#naat').typeahead("val", "");
+                            $('#naats').empty();
+                            vm = { naatId: [] };
+                            validator.resetForm();
+                        })
+                        .fail(function () {
+                            toastr.error("Some Error occured");
+                        });
+                    return false;
+                }
+            });
+        });
+    </script>
+}
+

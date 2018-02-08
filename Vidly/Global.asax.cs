@@ -24,6 +24,10 @@ namespace Vidly
                 c.CreateMap<CustomerDTO, Customer>();
                 c.CreateMap<MembershipType, MembershipTypeDTO>();
                 c.CreateMap<MembershipTypeDTO, MembershipType>();
+                c.CreateMap<Naat, NaatDTO>();
+                c.CreateMap<NaatDTO, Naat>();
+                c.CreateMap<Genre, GenreDTO>();
+                c.CreateMap<GenreDTO, Genre>();
             }
              );
             GlobalConfiguration.Configure(WebApiConfig.Register);
